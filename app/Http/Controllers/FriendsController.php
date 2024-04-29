@@ -18,9 +18,9 @@ class FriendsController extends Controller
         $auth_id = Auth::id();
         $friends_id = [];
 
-        $friends = Friend::where('request_from', '=', $auth_id)
+        $friends = Friend::where('accepted', "=", true)
+            ->where('request_from', '=', $auth_id)
             ->orWhere('request_to', '=', $auth_id)
-            ->where('accepted', true)
             ->get();
 
         foreach ($friends as $friend) {

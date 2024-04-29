@@ -3,7 +3,7 @@ import refreshLoginSlice from "./reducers/refreshLoginSlice";
 
 
 const RootReducer = combineReducers({
-    refreshLogin : refreshLoginSlice
+    Auth : refreshLoginSlice
 })
 
 

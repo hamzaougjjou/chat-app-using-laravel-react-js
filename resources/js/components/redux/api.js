@@ -1,23 +1,27 @@
 import axios from "axios";
-import { mainUrl } from "../API";
 import { startLogin, getLogin, LoginError } from "./reducers/refreshLoginSlice"
 
 
 export const refreshLogin = async (dispatch) => {
 
     let authInfo = JSON.parse(localStorage.getItem('authInfo'));
-    if (authInfo === null) {
+
+
+    if (authInfo == null || !authInfo) {
         dispatch(LoginError());
         return 0;
     }
+
     dispatch(startLogin());
-    await axios.post(`${mainUrl}/login`, { "email": authInfo.email, "password": authInfo.password })
+    await axios.post(`/api/login`, { "email": authInfo.email, "password": authInfo.password })
         .then(data => {
+            // console.log(data.data);
             if (data.data.success === true) {
                 const authInfo2 = {
                     "email": authInfo.email,
                     "password": authInfo.password,
-                    "token": data.data.token
+                    "token": data.data.auth.token,
+                    "user": data.data.user
                 }
                 dispatch(getLogin(authInfo2));
             }

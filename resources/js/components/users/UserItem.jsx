@@ -1,24 +1,26 @@
 
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
 
 function UserItem({ user }) {
-
+    
     const [sendReqLoading, setSendReqLoading] = useState(false);
     const [friendStatus, setFriendStatus] = useState( user.friend_status ); // 1=>friend /0=>request send /
 
 
 
     const [error, setError] = useState(false);
-    let auth = localStorage.getItem("auth");
-    auth = JSON.parse(auth);
+ 
+    const Auth = useSelector(state => state.Auth);
+
 
 
     // Configuring Axios to send the token with the request
     const axiosConfig = {
         headers: {
-            'Authorization': `Bearer ${auth.token}` // Assuming Bearer token authentication
+            'Authorization': `Bearer ${Auth.token}` // Assuming Bearer token authentication
             // Adjust the header name and format according to your API requirements
         }
     };
@@ -153,7 +155,7 @@ function UserItem({ user }) {
 
 function UserItemLoading() {
     return (
-        <div role="status" className="w-full max-w-sm  animate-pulse  bg-white border border-gray-200 
+        <div className="w-full max-w-sm z-0  bg-white border border-gray-200 
             rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
 
             <div className="flex flex-col items-center pb-10">

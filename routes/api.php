@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Broadcast::routes(['middleware' => ['auth:sanctum']]);
+
+
+
 //auth urls
 Route::controller(AuthController::class)->group(function () {
     Route::post('login', 'login');

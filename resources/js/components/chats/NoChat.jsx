@@ -4,7 +4,7 @@ function NoChat() {
     return (
 
 
-        <section className="w-[50%]">
+        <section className="w-[50%] no-chat-selected">
             <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 h-full flex justify-center items-center">
 
                 <div className="bg-gray-50 border border-gray-200 dark:border-gray-700 rounded-lg p-8 md:p-12 mb-8

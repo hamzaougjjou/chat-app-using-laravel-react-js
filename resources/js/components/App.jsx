@@ -1,50 +1,33 @@
-import React, { useEffect, useState } from 'react';
-import Header from './Header';
+import React from 'react';
 import NavPages from './NavPages';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { refreshLogin } from './redux/api';
 
-
-import { useNavigate } from "react-router-dom";
 function App() {
 
-    let [loadingCheckLogin, setLoadingCheckLogin] = useState(true);
-    let navigate = useNavigate();
+
+    const Auth = useSelector(state => state.Auth);
+
+    let dispatch = useDispatch();
+
 
     useEffect(() => {
-        refreshLogin();
-    }, []);
+        refreshLogin(dispatch);
+        setInterval(() => {
+            refreshLogin(dispatch);
+        }, 3300000); //refresh every 55 minutes 1000 * 60 * 55
+
+    }, [])
 
 
-    const refreshLogin = async () => {
-        let authInfo = JSON.parse(localStorage.getItem('authInfo'));
-        if (authInfo == null || !authInfo) {
-            // go login page
-            setLoadingCheckLogin(false);
-            navigate('/login');
-            return 0;
-        }
-        await axios.post(`http://127.0.0.1:8000/api/login`, { "email": authInfo.email, "password": authInfo.password })
-            .then(result => {
-                if (result.data.success === true) {
-                    localStorage.setItem('auth', JSON.stringify(result.data.auth));
-                    localStorage.setItem('user', JSON.stringify(result.data.user));
-                } else {
-                    navigate('/login');
-                }
-            }
-
-            ).catch(errors => {//something went worng
-                setLoadingCheckLogin(false);
-                navigate('/login');
-            }).finally(() => {
-                setLoadingCheckLogin(false);
-            });
-    }
+ 
 
     return (
 
         <>
             {
-                loadingCheckLogin ?
+                Auth.loading ?
 
                     <div className='flex items-center justify-center bg-gray-100 h-screen'>
                         <div className="text-center">
@@ -60,9 +43,6 @@ function App() {
                     </div>
                     :
                     <div className='px-2'>
-                        <Header setLoadingCheckLogin={setLoadingCheckLogin}
-                            loadingCheckLogin={loadingCheckLogin}
-                        />
                         <NavPages />
                     </div>
             }

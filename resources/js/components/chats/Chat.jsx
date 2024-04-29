@@ -1,10 +1,13 @@
+import Echo from 'laravel-echo';
 import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom';
+import Pusher from 'pusher-js';
+import { useSelector } from 'react-redux';
 
 
 
 
-function Chat({ reciever_id }) {
+function Chat({ reciever_id, refreshConversations, setRefreshConversations }) {
 
     const [messageContent, setMessageContent] = useState("");
 
@@ -19,19 +22,25 @@ function Chat({ reciever_id }) {
     let chat_container = useRef();
 
     useEffect(() => {
-        getAllMessages()
+        getAllMessages();
+        setMessages();
+        //scroll up
+        window.scrollTo(0, 0);
+
     }, [reciever_id]);
 
 
+
+    const Auth = useSelector(state => state.Auth);
+
+
+
     const getAllMessages = async () => {
-        // Token to be sent with the request
-        let auth = localStorage.getItem("auth");
-        auth = JSON.parse(auth);
 
         // Configuring Axios to send the token with the request
         const axiosConfig = {
             headers: {
-                'Authorization': `Bearer ${auth.token}` // Assuming Bearer token authentication
+                'Authorization': `Bearer ${Auth.token}` // Assuming Bearer token authentication
                 // Adjust the header name and format according to your API requirements
             }
         };
@@ -43,7 +52,7 @@ function Chat({ reciever_id }) {
             .then(result => {
 
 
-                console.log(result.data);
+                // console.log(result.data);
 
                 if (result.data.success == false && result.data.code == 404) {
                     setUserFound(false);
@@ -65,9 +74,9 @@ function Chat({ reciever_id }) {
 
             ).catch(errors => {//something went worng
 
-                console.log('====================================');
-                console.log(errors);
-                console.log('====================================');
+                // console.log('====================================');
+                // console.log(errors);
+                // console.log('====================================');
 
             }).finally(() => {
                 setLoading(false);
@@ -75,14 +84,11 @@ function Chat({ reciever_id }) {
     }
 
     const handleSendMessage = async () => {
-        // Token to be sent with the request
-        let auth = localStorage.getItem("auth");
-        auth = JSON.parse(auth);
 
         // Configuring Axios to send the token with the request
         const axiosConfig = {
             headers: {
-                'Authorization': `Bearer ${auth.token}` // Assuming Bearer token authentication
+                'Authorization': `Bearer ${Auth.token}` // Assuming Bearer token authentication
                 // Adjust the header name and format according to your API requirements
             }
         };
@@ -100,7 +106,16 @@ function Chat({ reciever_id }) {
         }, axiosConfig)
             .then(result => {
                 setMessageContent('');
+
+                // if (result.data.message.message.reciever_id == reciever_id ) {
                 setMessages([...messages, result.data.message]);
+                // }
+
+
+
+                setRefreshConversations(!refreshConversations);
+
+
                 setTimeout(() => {
                     const div = chat_container.current; // Replace 'yourDivId' with the actual ID of your div element
                     div.scrollTop = div.scrollHeight;
@@ -109,15 +124,73 @@ function Chat({ reciever_id }) {
 
             ).catch(errors => {//something went worng
 
-                console.log('====================================');
-                console.log(errors);
-                console.log('====================================');
+                // console.log('====================================');
+                // console.log(errors);
+                // console.log('====================================');
 
             }).finally(() => {
                 setSendMessageLoading(false);
             });
     }
 
+    // =============================================================
+
+
+
+    const options = {
+        broadcaster: 'pusher',
+
+        key: "local",
+        cluster: "mt1",
+
+        forceTLS: false,
+
+        wsPort: 6001,
+        disableStats: true,
+
+        wsHost: "127.0.0.1",
+
+        //authEndpoint is your apiUrl + /broadcasting/auth
+        authEndpoint: "http://127.0.0.1:8000/api/broadcasting/auth",
+        // As I'm using JWT tokens, I need to manually set up the headers.
+        auth: {
+            headers: {
+                Authorization: `Bearer ${Auth.token}`,
+                Accept: 'application/json',
+            },
+        },
+    };
+
+
+    const echo = new Echo(options);
+
+
+    // to connect the privatechannel
+    if (Auth.user) {
+        echo.channel("chat." + Auth.user.id).listen("NewChatMessage", e => {
+            console.log('====================================');
+            console.log(e);
+            console.log(reciever_id);
+            console.log('====================================');
+
+            // console.log(e.message.emitter_id == reciever_id);
+            // console.log(e.message.emitter_id, "+++++++++++++++", reciever_id);
+            // console.log('====================================');
+
+            setRefreshConversations(!refreshConversations);
+
+            if (e.reciever == reciever_id) {
+                setMessages([...messages, e.message]);
+                setTimeout(() => {
+                    const div = chat_container.current; // Replace 'yourDivId' with the actual ID of your div element
+                    div.scrollTop = div.scrollHeight;
+                }, 100);
+            } else {
+                console.log("YOU HAVE A NEW MESAGE " + e.message.content + " from " + e.user.name)
+            }
+        })
+    }
+    // =============================================================
 
     return (
 
@@ -125,7 +198,7 @@ function Chat({ reciever_id }) {
             {
                 userFound ?
 
-                    <div className="flex flex-col items-center justify-center text-gray-800 w-[50%]"
+                    <div className="flex flex-col items-center justify-center text-gray-800 w-[50%] chat-all"
                         style={
                             {
                                 height: "calc(100vh - 150px )"
@@ -206,13 +279,13 @@ function Chat({ reciever_id }) {
                                                     </div>)
                                             }
                                             return (
-                                                <div className="flex gap-2.5 justify-end" key={index}>
+                                                <div className="flex gap-2.5 justify-end break-all" key={index}>
                                                     <div style={{ minWidth: "200px" }}>
 
                                                         <div className="justify-center ">
                                                             <div className="grid w-fit ml-auto max-w-[95%]">
                                                                 <div className="px-3 py-2 bg-indigo-600 rounded " style={{ minWidth: "200px" }}>
-                                                                    <h2 className="text-white text-sm font-normal leading-snug">{message.content}</h2>
+                                                                    <h2 className="text-white text-sm font-normal leading-snug break-all">{message.content}</h2>
                                                                 </div>
                                                                 <div className="justify-between items-center inline-flex px-2">
                                                                     <h3 className="text-gray-500 text-xs font-normal leading-4 py-1">seen</h3>
@@ -270,10 +343,10 @@ function Chat({ reciever_id }) {
                                                 </g>
                                             </g>
                                         </svg>
-                                        <button className="items-center flex px-3 py-2 bg-indigo-600 rounded-full shadow gap-1"
+                                        <button className="items-center flex bg-indigo-600 rounded-full shadow gap-1  px-4 py-2"
                                             onClick={handleSendMessage}
                                         >
-                                            <h3 className="text-white text-xs font-semibold leading-4 pt-2">Send</h3>
+                                            <h3 className="text-white text-xs font-semibold leading-4">Send</h3>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                                 <g id="Send 01">
                                                     <path id="icon" d="M9.04071 6.959L6.54227 9.45744M6.89902 10.0724L7.03391 10.3054C8.31034 12.5102 8.94855 13.6125 9.80584 13.5252C10.6631 13.4379 11.0659 12.2295 11.8715 9.81261L13.0272 6.34566C13.7631 4.13794 14.1311 3.03408 13.5484 2.45139C12.9657 1.8687 11.8618 2.23666 9.65409 2.97257L6.18714 4.12822C3.77029 4.93383 2.56187 5.33664 2.47454 6.19392C2.38721 7.0512 3.48957 7.68941 5.69431 8.96584L5.92731 9.10074C6.23326 9.27786 6.38623 9.36643 6.50978 9.48998C6.63333 9.61352 6.72189 9.7665 6.89902 10.0724Z" stroke="white" strokeWidth="1.6" strokeLinecap="round" />

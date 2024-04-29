@@ -18,7 +18,7 @@ class AuthController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+
     }
 
     
@@ -29,53 +29,24 @@ class AuthController extends Controller
         if ($userEmailDetails != null) {
             return response()->json([
                 'success' => false,
+                'code' => -1,
                 'error' => "user aleady exists",
             ]);
         }
-        // check if user uploaded a profile image 
-        $profile_img = $request->file('profile_img');
-        $profile_img_data = null;
-        if ($profile_img != null) {
-            $image_path = $profile_img->store('images/profiles', 'public');
-            $data = File::create([
-                "type" => "image/png",
-                "size" => 20025,
-                "file" => "storage/" . $image_path
-            ]);
-            $profile_img_data = $data;
-        }
-        // check if user uploaded a cover image 
-        $cover_img = $request->file('cover_img');
-        $cover_img_data = null;
-        if ($cover_img != null) {
-            $image_path = $cover_img->store('images/covers', 'public');
-            $data = File::create([
-                "type" => "image/png",
-                "size" => 20025,
-                "file" => "storage/" . $image_path
-            ]);
-            $cover_img_data = $data;
-        }
+       
         // =================================================
         $validate = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users',
             'password' => 'required|string|min:6',
-            'phone' => 'required|string|min:8'
         ]);
+
+
         if ($validate->fails()) {
             return response()->json([
                 'success' => false,
                 'error' => "invalid data sent",
             ]);
-        }
-        $profile_img_id = null;
-        $cover_img_id = null;
-        if ($profile_img_data != null) {
-            $profile_img_id = $profile_img_data->id;
-        }
-        if ($cover_img_data != null) {
-            $cover_img_id = $cover_img_data->id;
         }
 
         $user = User::create(
@@ -83,8 +54,6 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'profile_image' => $profile_img_id,
-                'cover_image' => $cover_img_id,
                 'phone' => $request->phone,
                 'birthday' => $request->birthday,
                 'address' => $request->adress,
@@ -102,7 +71,7 @@ class AuthController extends Controller
                     'message' => 'Login credentials are invalid.',
                 ], 400);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // return $credentials;
             return response()->json([
                 'success' => false,

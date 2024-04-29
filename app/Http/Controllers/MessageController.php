@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\chat;
+use App\Events\NewChatMessage;
 use App\Models\User;
 use App\Models\Message;
 use App\Models\File;
@@ -73,6 +75,13 @@ class MessageController extends Controller
 
         $message->seen = false;
         $message->time = $message->created_at->diffForHumans();
+
+
+        $userX = User::find(  $reciever_id );
+        // chat::dispatch( $userX );
+        broadcast( new NewChatMessage($message, $userX ,  $auth_id )  );
+
+        // event(new NewChatMessage($message, $userX ));
 
         return response()->json([
             'success' => true,

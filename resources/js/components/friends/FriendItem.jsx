@@ -1,6 +1,7 @@
 
 import axios from 'axios';
 import React, { useState } from 'react'
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
 
 function FriendItem({ friend }) {
@@ -9,14 +10,13 @@ function FriendItem({ friend }) {
     const [friendStatus, setFriendStatus] = useState( 1 ); // 1=>friend /0=>request send /
     const [error, setError] = useState(false);
 
-    let auth = localStorage.getItem("auth");
-    auth = JSON.parse(auth);
 
+    const Auth = useSelector(state => state.Auth);
 
     // Configuring Axios to send the token with the request
     const axiosConfig = {
         headers: {
-            'Authorization': `Bearer ${auth.token}` // Assuming Bearer token authentication
+            'Authorization': `Bearer ${Auth.token}` // Assuming Bearer token authentication
             // Adjust the header name and format according to your API requirements
         }
     };

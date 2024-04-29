@@ -5,7 +5,7 @@ import refreshLoginSlice from "./reducers/refreshLoginSlice";
 
 let store = configureStore( {
     reducer:{
-        refreshLogin : refreshLoginSlice,
+        Auth : refreshLoginSlice,
     }
 } );
 

@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom'
 
-function Users() {
+function Users({refreshConversations}) {
 
     const [conversations, setConversations] = useState([]);
 
+    
+    const Auth = useSelector(state => state.Auth);
+
     const getAllConversations = async () => {
-        // Token to be sent with the request
-        let auth = localStorage.getItem("auth");
-        auth = JSON.parse(auth);
 
         // Configuring Axios to send the token with the request
         const axiosConfig = {
             headers: {
-                'Authorization': `Bearer ${auth.token}` // Assuming Bearer token authentication
+                'Authorization': `Bearer ${Auth.token}` // Assuming Bearer token authentication
                 // Adjust the header name and format according to your API requirements
             }
         };
@@ -22,16 +23,16 @@ function Users() {
         // Making a POST request using Axios with the token
         await axios.get(`/api/conversations`, axiosConfig)
             .then(result => {
-                console.log('====================================');
-                console.log(result.data);
+                // console.log('====================================');
+                // console.log(result.data);
                 setConversations(result.data.conversations);
-                console.log('====================================');
+                // console.log('====================================');
             }
 
             ).catch(errors => {//something went worng
-                console.log('====================================');
-                console.log(errors);
-                console.log('====================================');
+                // console.log('====================================');
+                // console.log(errors);
+                // console.log('====================================');
             }).finally(() => {
 
             });
@@ -39,12 +40,13 @@ function Users() {
 
     useEffect(() => {
         getAllConversations();
-    }, [])
+    }, [ refreshConversations ])
 
 
     return (
-        <div className="w-full max-w-md p-4 bg-white border border-gray-200 rounded-lg shadow
-            w-[40%]
+        <div className="w-screen p-4 bg-white border border-gray-200 rounded-lg shadow
+           overflow-y-auto overflow-x-hidden
+            chat-users-container
              sm:p-8 dark:bg-gray-800 dark:border-gray-700">
             <div className="flex items-center justify-between mb-4">
                 <h5 className="text-xl font-bold leading-none text-gray-900 dark:text-white">Messages</h5>
@@ -69,7 +71,7 @@ export default Users
 
 
 function UserItem({ conversation }) {
-    console.log(conversation);
+    // console.log(conversation);
     return (
         <Link to={"/chats/" + conversation.user.id} className="p-3 cursor-pointer block mb-2">
             <div className="flex items-center">
