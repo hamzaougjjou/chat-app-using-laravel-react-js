@@ -1,0 +1,192 @@
+.container_sub{
+    background-color: #fff;
+    max-width: 1500px;
+    margin: 25px auto;
+    padding: 20px !important;
+    border-radius: 5px;
+}
+
+h1 {
+    text-align: center;
+}
+
+.order-info {
+    margin-bottom: 20px;
+}
+
+table {
+    padding: 10px;
+    background-color: #f8f4f4;
+}
+
+.order-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.order-info th,
+.order-info td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.order-info th {
+    background-color: #b8b8b8;
+}
+
+.product-info {
+    margin-bottom: 20px;
+}
+
+.product-info table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product-info th,
+.product-info td {
+    padding: 10px;
+    text-align: left;
+}
+
+.product-info th {
+    background-color: #b8b8b8;
+}
+
+.product-info tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.client-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.client-info th,
+.client-info td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+.client-info th {
+    background-color: #b8b8b8;
+}
+
+.card {
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #6DD3Dc;
+    max-width: 400px;
+    font-weight: 900;
+}
+
+.card h2 {
+    margin-top: 0;
+}
+
+.card p {
+    line-height: 1.5em;
+    margin: 5px 0;
+}
+
+.btn-container {
+    margin-top: 20px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    flex-wrap: wrap;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.btn {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-confirm {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background-color: #45a049;
+}
+
+.btn-shipped {
+    background-color: #FFA500;
+    color: white;
+}
+
+.btn-shipped:hover {
+    background-color: #FF8C00;
+}
+
+.btn-delivered {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-delivered:hover {
+    background-color: #0056b3;
+}
+
+.btn-cancel {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.btn-cancel:hover {
+    background-color: #c82333 !important;
+}
+
+
+.order_item_header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    align-items: center;
+}
+
+.order_item_header div span {
+    font-weight: bold;
+    color: #007bff;
+    font-size: 22px;
+    text-decoration: underline;
+}
+
+.back-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 4px 10px;
+    padding-top: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+.back-button .arrow {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border-top: 2px solid white;
+    border-right: 2px solid white;
+    transform: rotate(-135deg);
+}
